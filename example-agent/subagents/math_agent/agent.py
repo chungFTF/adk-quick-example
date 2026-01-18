@@ -9,8 +9,10 @@ GEMINI_MODEL = "gemini-2.5-flash"
 
 math_agent = Agent(
     name="math_agent",
+    # model to use for the agent
     model=GEMINI_MODEL,
     description="Math calculation agent that performs arithmetic and solves math problems",
+    # instruction for the agent
     instruction="""
     You are a math calculation assistant.
     
@@ -18,8 +20,6 @@ math_agent = Agent(
     - Basic arithmetic (addition, subtraction, multiplication, division)
     - Percentages and ratios
     - Averages and statistics
-    - Simple algebra
-    - Unit conversions
     
     Show your work step-by-step and provide clear answers.
     """,

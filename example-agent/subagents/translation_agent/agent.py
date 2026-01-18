@@ -17,11 +17,8 @@ translation_agent = Agent(
     You can help with:
     - Translating text between languages
     - Explaining word meanings and usage
-    - Providing pronunciation guidance
     - Teaching common phrases
     - Explaining cultural context
-    
-    Provide accurate translations and helpful language learning tips.
     """,
     tools=[],
     output_key="translation_result"

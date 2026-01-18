@@ -2,7 +2,7 @@
 
 ## Multi-Agent System Overview
 
-The Lifestyle Assistant is a Multi-Agent system built with Google ADK that coordinates three specialized agents to provide comprehensive lifestyle assistance.
+The Example Agent is a Multi-Agent system built with Google ADK that coordinates two specialized agents to handle mathematical calculations and language translation tasks.
 
 ## Architecture Diagram
 
@@ -13,164 +13,144 @@ The Lifestyle Assistant is a Multi-Agent system built with Google ADK that coord
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
-│              Lifestyle Coordinator (Root Agent)             │
-│                  Type: SequentialAgent                      │
+│              Root Agent (Coordinator)                       │
+│                  Type: Agent                                │
 │                                                             │
-│  Orchestrates sub-agents to process user queries and       │
-│  provide comprehensive lifestyle assistance                │
+│  Intelligently routes user queries to specialized agents    │
+│  based on query type (math or translation)                 │
 └────────────────────────┬────────────────────────────────────┘
                          │
-         ┌───────────────┼───────────────┐
-         │               │               │
-         ▼               ▼               ▼
-┌────────────────┐ ┌─────────────┐ ┌──────────────┐
-│ Weather Agent  │ │ Restaurant  │ │ Event Agent  │
-│                │ │ Agent       │ │              │
-│ Type: LlmAgent │ │ Type:       │ │ Type:        │
-│                │ │ LlmAgent    │ │ LlmAgent     │
-├────────────────┤ ├─────────────┤ ├──────────────┤
-│ Tools:         │ │ Tools:      │ │ Tools:       │
-│ • google_      │ │ • get_      │ │ • search_    │
-│   search       │ │   restaurant│ │   local_     │
-│                │ │   _recom-   │ │   events     │
-│                │ │   mendations│ │              │
-├────────────────┤ ├─────────────┤ ├──────────────┤
-│ Provides:      │ │ Provides:   │ │ Provides:    │
-│ • Current      │ │ • Restaurant│ │ • Concerts   │
-│   conditions   │ │   suggestions│ │ • Sports     │
-│ • Forecasts    │ │ • Cuisine   │ │ • Theater    │
-│ • Temperature  │ │   types     │ │ • Exhibitions│
-│ • Precipitation│ │ • Budget    │ │ • Festivals  │
-│                │ │   options   │ │              │
-└────────────────┘ └─────────────┘ └──────────────┘
-         │               │               │
-         └───────────────┼───────────────┘
+              ┌──────────┴──────────┐
+              │                     │
+              ▼                     ▼
+┌─────────────────────┐  ┌──────────────────────┐
+│   Math Agent        │  │  Translation Agent   │
+│                     │  │                      │
+│ Type: Agent         │  │ Type: Agent          │
+│ Model: gemini-2.5-  │  │ Model: gemini-2.5-  │
+│       flash         │  │       flash-lite     │
+├─────────────────────┤  ├──────────────────────┤
+│ Capabilities:      │  │ Capabilities:        │
+│ • Basic arithmetic │  │ • Language           │
+│ • Percentages      │  │   translation       │
+│ • Ratios           │  │ • Word meanings     │
+│ • Averages         │  │ • Common phrases    │
+│ • Statistics       │  │ • Cultural context  │
+├─────────────────────┤  ├──────────────────────┤
+│ Output Key:        │  │ Output Key:         │
+│ math_result        │  │ translation_result  │
+└─────────────────────┘  └──────────────────────┘
+              │                     │
+              └──────────┬───────────┘
                          │
                          ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                 Integrated Response                         │
 │                                                             │
-│  Combines results from all relevant agents into a          │
-│  coherent, comprehensive answer                            │
+│  Returns result from the appropriate specialized agent     │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 ## Agent Details
 
-### 1. Lifestyle Coordinator (Root Agent)
-- **Type**: SequentialAgent
-- **Role**: Main orchestrator that routes queries to appropriate sub-agents
-- **Processing**: Executes sub-agents sequentially
-- **Output**: Integrated response from all relevant agents
-
-### 2. Weather Agent
-- **Type**: LlmAgent
+### 1. Root Agent (Coordinator)
+- **Type**: Agent
 - **Model**: gemini-2.5-flash
-- **Tools**: google_search
-- **Capabilities**:
-  - Current weather conditions
-  - Weather forecasts
-  - Temperature information (Celsius and Fahrenheit)
-  - Precipitation data
-  - Weather alerts
-- **State Output**: `weather_info`
+- **Role**: Intelligent coordinator that routes queries to appropriate sub-agents
+- **Routing Logic**:
+  - Math questions (calculations, arithmetic, percentages, algebra) → math_agent
+  - Translation questions (language translation, word meanings, phrases) → translation_agent
+- **Sub-agents**: [math_agent, translation_agent]
 
-### 3. Restaurant Agent
-- **Type**: LlmAgent
-- **Model**: gemini-2.5-flash-lite
-- **Tools**: get_restaurant_recommendations (custom)
+### 2. Math Agent
+- **Type**: Agent
+- **Model**: gemini-2.5-flash
 - **Capabilities**:
-  - Cuisine-based recommendations
-  - Budget filtering (budget-friendly, mid-range, fine-dining)
-  - Location-based search
-  - Dietary restriction support
-  - Multiple recommendation options
-- **State Output**: `restaurant_recommendations`
+  - Basic arithmetic (addition, subtraction, multiplication, division)
+  - Percentages and ratios
+  - Averages and statistics
+  - Step-by-step problem solving
+- **Output Key**: `math_result`
+- **Tools**: None (uses model's built-in math capabilities)
 
-### 4. Event Agent
-- **Type**: LlmAgent
+### 3. Translation Agent
+- **Type**: Agent
 - **Model**: gemini-2.5-flash-lite
-- **Tools**: search_local_events (custom)
 - **Capabilities**:
-  - Concert discovery
-  - Sports events
-  - Theater shows
-  - Art exhibitions
-  - Festivals and community events
-  - Date range filtering
-  - Price filtering (free/ticketed)
-- **State Output**: `event_info`
+  - Translating text between languages
+  - Explaining word meanings and usage
+  - Teaching common phrases
+  - Explaining cultural context
+- **Output Key**: `translation_result`
+- **Tools**: None (uses model's built-in translation capabilities)
 
 ## Data Flow
 
 1. **Query Reception**: User submits a query through the ADK web interface
 
-2. **Root Agent Processing**: Lifestyle Coordinator receives the query
+2. **Root Agent Processing**: Root agent receives the query and analyzes it
 
-3. **Sequential Execution**:
-   - **Weather Agent** processes the query:
-     - If weather-related: Uses google_search to find information
-     - If not relevant: Returns "not applicable" message
-     - Stores results in state as `weather_info`
+3. **Query Routing**: 
+   - Root agent determines if the query is:
+     - **Math-related**: Routes to math_agent
+     - **Translation-related**: Routes to translation_agent
+     - **Neither**: Provides helpful response explaining capabilities
+
+4. **Agent Execution**:
+   - **Math Agent** (if routed):
+     - Processes mathematical query
+     - Shows work step-by-step
+     - Stores result in state as `math_result`
    
-   - **Restaurant Agent** processes the query:
-     - If dining-related: Uses get_restaurant_recommendations tool
-     - Filters by cuisine, budget, dietary restrictions
-     - Stores results in state as `restaurant_recommendations`
-   
-   - **Event Agent** processes the query:
-     - If event-related: Uses search_local_events tool
-     - Filters by category, date range, price
-     - Stores results in state as `event_info`
+   - **Translation Agent** (if routed):
+     - Processes translation or language query
+     - Provides translation or explanation
+     - Stores result in state as `translation_result`
 
-4. **Response Integration**: Coordinator combines all relevant responses
-
-5. **Output Delivery**: User receives comprehensive answer
+5. **Response Delivery**: User receives answer from the appropriate specialized agent
 
 ## State Management
 
 The system uses ADK's state management to share information:
 
 ```python
-# Weather Agent
-tool_context.state["weather_info"] = weather_data
+# Math Agent
+output_key="math_result"  # Stores math calculation results
 
-# Restaurant Agent  
-tool_context.state["restaurant_results"] = restaurant_data
-
-# Event Agent
-tool_context.state["event_results"] = event_data
+# Translation Agent
+output_key="translation_result"  # Stores translation results
 ```
 
-Other agents and the root coordinator can access these states to provide integrated responses.
+The root coordinator can access these output states to provide integrated responses when needed.
 
 ## Extension Points
 
 The system can be extended with additional agents:
 
-1. **Transportation Agent**: Public transit, rideshare, parking information
-2. **Shopping Agent**: Store recommendations, deals, product searches
-3. **Fitness Agent**: Gym recommendations, workout classes, outdoor activities
-4. **Entertainment Agent**: Movies, streaming recommendations, game nights
-5. **Travel Agent**: Hotels, flights, vacation planning
+1. **Code Agent**: Code generation, debugging, code explanation
+2. **Writing Agent**: Content creation, editing, proofreading
+3. **Research Agent**: Information gathering, fact-checking
+4. **Analysis Agent**: Data analysis, chart generation
+5. **Conversation Agent**: General conversation, Q&A
 
 To add a new agent:
-1. Create a new directory under `subagents/`
-2. Implement the agent with appropriate tools
-3. Add to root agent's `sub_agents` list
-4. Update documentation
+1. Create a new directory under `example-agent/subagents/`
+2. Implement the agent with appropriate model and instructions
+3. Add to root agent's `sub_agents` list in `example-agent/agent.py`
+4. Update routing logic in root agent's instruction
+5. Update documentation
 
 ## Performance Considerations
 
-- **Sequential Processing**: Agents execute in order, which may take longer for complex queries
 - **Model Selection**: 
-  - Use `gemini-2.5-flash` for tasks requiring Google Search or complex reasoning
-  - Use `gemini-2.5-flash-lite` for lighter tasks with custom tools
-- **Tool Optimization**: Custom tools use local data for fast responses
+  - Use `gemini-2.5-flash` for complex reasoning tasks (root agent, math agent)
+  - Use `gemini-2.5-flash-lite` for lighter tasks (translation agent)
+- **Routing Efficiency**: Root agent quickly identifies query type and routes to appropriate agent
+- **No External Tools**: Both sub-agents rely on model capabilities, ensuring fast responses
 
 ## Security & Privacy
 
 - API keys stored in `.env` (never committed to version control)
 - State management keeps data in memory during session
 - No persistent storage of user queries or personal data
-- All external API calls go through ADK's secure tool framework
+- All processing done through ADK's secure framework

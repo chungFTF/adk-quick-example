@@ -32,9 +32,5 @@ root_agent = Agent(
     provide a helpful response explaining what you can assist with.
     """,
     # sub-agents to use for the agent
-    sub_agents=[math_agent, translation_agent],
-    generate_content_config=types.GenerateContentConfig(
-        temperature=0.7,
-        top_p=0.95
-    ),
+    sub_agents=[math_agent, translation_agent]
 )

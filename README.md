@@ -13,8 +13,6 @@ adk-example/
 ├── .env.example                    # Environment configuration example
 ├── README.md                       # This documentation
 ├── ARCHITECTURE.md                 # System architecture details
-├── QUICK_START.md                  # Quick start guide
-├── TESTING_GUIDE.md                # Testing instructions
 ├── requirements.txt                # Python dependencies
 └── example-agent/                  # Root agent
     ├── __init__.py

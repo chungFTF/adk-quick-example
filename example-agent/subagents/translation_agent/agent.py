@@ -5,7 +5,7 @@ Provides language translation and language learning assistance
 
 from google.adk.agents import Agent
 
-GEMINI_MODEL = "gemini-2.5-flash-lite"
+GEMINI_MODEL = "gemini-2.5-flash"
 
 translation_agent = Agent(
     name="translation_agent",

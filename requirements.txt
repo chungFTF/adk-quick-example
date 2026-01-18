@@ -1,0 +1,7 @@
+# Core dependencies for ADK Lifestyle Assistant
+
+# Google ADK
+google-adk>=0.1.0
+
+# Additional dependencies (if needed)
+python-dotenv>=1.0.0
